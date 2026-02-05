@@ -3,19 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MelodyMethod - Portal del Estudiante</title>
+    <title>MelodyMethod - Portal Pro</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
-<body class="bg-slate-100 min-h-screen flex">
+<body class="bg-slate-100 min-h-screen flex flex-col md:flex-row">
 
-    <aside class="w-80 bg-[#1e293b] text-white flex flex-col shadow-xl">
+    <aside class="w-full md:w-80 bg-[#1e293b] text-white flex flex-col shadow-xl">
         <div class="p-6">
             <h1 class="text-3xl font-bold text-[#f59e0b]">MelodyMethod</h1>
-            <p id="alumno-nombre" class="text-slate-400 text-sm mt-1 uppercase tracking-widest">ESTUDIANTE: ...</p>
+            <p id="alumno-nombre" class="text-slate-400 text-sm mt-1 uppercase tracking-widest italic">ESTUDIANTE: ...</p>
         </div>
 
-        <nav class="flex-1 px-4">
+        <nav class="flex-1 px-4 overflow-y-auto">
             <label class="block mb-6">
                 <div class="bg-[#f59e0b] hover:bg-[#d97706] text-white font-bold py-3 px-4 rounded-lg cursor-pointer flex items-center justify-center gap-2 transition-all shadow-lg">
                     <i class="fas fa-file-import"></i> CARGAR CURSO (.json)
@@ -23,54 +23,43 @@
                 <input type="file" id="jsonFile" accept=".json" class="hidden">
             </label>
 
-            <div id="lista-lecciones" class="space-y-2">
+            <div id="lista-lecciones" class="space-y-2 pb-8">
                 </div>
         </nav>
-        
-        <div class="p-4 text-xs text-slate-500 border-t border-slate-700">
-            ©2026 DR Quiro Studio
-        </div>
+        <div class="p-4 text-xs text-slate-500 border-t border-slate-700 text-center">©2026 DR Quiro Studio</div>
     </aside>
 
-    <main class="flex-1 p-8 overflow-y-auto">
-        <div id="pantalla-vacia" class="h-full flex flex-col items-center justify-center text-slate-400">
-            <i class="fas fa-headphones text-6xl mb-4"></i>
-            <p class="text-xl">Carga tu archivo JSON para comenzar</p>
+    <main class="flex-1 p-4 md:p-8 overflow-y-auto">
+        <div id="pantalla-vacia" class="h-full flex flex-col items-center justify-center text-slate-400 py-20">
+            <i class="fas fa-headphones text-6xl mb-4 opacity-20"></i>
+            <p class="text-xl font-medium">Carga tu archivo JSON para comenzar la lección</p>
         </div>
 
         <div id="contenido-leccion" class="hidden grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div class="lg:col-span-2 space-y-6">
-                <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-200">
-                    <h2 id="leccion-titulo" class="text-2xl font-bold text-slate-800 mb-6"></h2>
+                <div class="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-slate-200">
+                    <h2 id="leccion-titulo" class="text-2xl font-bold text-slate-800 mb-6 border-b pb-4"></h2>
                     
-                    <div id="audio-box" class="mb-8 bg-slate-50 p-4 rounded-xl flex items-center gap-4 border border-slate-100">
-                        <audio id="player" controls class="w-full"></audio>
+                    <div class="mb-8 bg-slate-50 p-4 rounded-xl border border-slate-100">
+                        <audio id="player" controls class="w-full h-12"></audio>
                     </div>
 
-                    <div id="leccion-texto" class="space-y-6">
+                    <div id="leccion-texto" class="space-y-8">
                         </div>
                 </div>
             </div>
 
             <div class="space-y-6">
                 <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-                    <h3 class="font-bold text-slate-800 flex items-center gap-2 border-b pb-3 mb-4 text-[#1e293b]">
-                        <i class="fas fa-book text-[#3b82f6]"></i> Vocabulario
-                    </h3>
-                    <div id="vocabulario" class="text-slate-600 space-y-2"></div>
+                    <h3 class="font-bold text-slate-800 flex items-center gap-2 border-b pb-3 mb-4"><i class="fas fa-book text-blue-500"></i> Vocabulario</h3>
+                    <p id="vocabulario" class="text-slate-600 whitespace-pre-line"></p>
                 </div>
-
                 <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-                    <h3 class="font-bold text-slate-800 flex items-center gap-2 border-b pb-3 mb-4 text-[#1e293b]">
-                        <i class="fas fa-globe text-[#3b82f6]"></i> Tip Cultural
-                    </h3>
+                    <h3 class="font-bold text-slate-800 flex items-center gap-2 border-b pb-3 mb-4"><i class="fas fa-lightbulb text-yellow-500"></i> Tip Cultural</h3>
                     <p id="tip-cultural" class="text-slate-600"></p>
                 </div>
-
                 <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-                    <h3 class="font-bold text-slate-800 flex items-center gap-2 border-b pb-3 mb-4 text-[#1e293b]">
-                        <i class="fas fa-pen text-[#3b82f6]"></i> Práctica
-                    </h3>
+                    <h3 class="font-bold text-slate-800 flex items-center gap-2 border-b pb-3 mb-4"><i class="fas fa-tasks text-green-500"></i> Práctica</h3>
                     <p id="practica" class="text-slate-600"></p>
                 </div>
             </div>
@@ -79,13 +68,16 @@
 
     <script>
         let cursoData = null;
+        const jsonInput = document.getElementById('jsonFile');
 
-        document.getElementById('jsonFile').addEventListener('change', function(e) {
+        jsonInput.addEventListener('change', function(e) {
             const reader = new FileReader();
             reader.onload = function(event) {
-                cursoData = JSON.parse(event.target.result);
-                document.getElementById('alumno-nombre').textContent = "ESTUDIANTE: " + cursoData.alumno;
-                renderMenu();
+                try {
+                    cursoData = JSON.parse(event.target.result);
+                    document.getElementById('alumno-nombre').textContent = "ESTUDIANTE: " + (cursoData.alumno || "ALICIA");
+                    renderMenu();
+                } catch(err) { alert("Error al leer el archivo JSON"); }
             };
             reader.readAsText(e.target.files[0]);
         });
@@ -95,8 +87,8 @@
             lista.innerHTML = '';
             cursoData.lecciones.forEach((lec, index) => {
                 const btn = document.createElement('button');
-                btn.className = "w-full text-left p-3 rounded-lg flex items-center gap-3 transition-all hover:bg-slate-700 text-slate-300";
-                btn.innerHTML = `<i class="fas fa-music text-sm opacity-50"></i> ${lec.title}`;
+                btn.className = "w-full text-left p-3 rounded-lg flex items-center gap-3 transition-all hover:bg-slate-700 text-slate-300 mb-1";
+                btn.innerHTML = `<i class="fas fa-play-circle opacity-50"></i> <span class="truncate">${lec.title}</span>`;
                 btn.onclick = () => mostrarLeccion(index, btn);
                 lista.appendChild(btn);
             });
@@ -107,36 +99,37 @@
             document.getElementById('pantalla-vacia').classList.add('hidden');
             document.getElementById('contenido-leccion').classList.remove('hidden');
             
-            // Marcar botón activo
-            document.querySelectorAll('#lista-lecciones button').forEach(b => b.classList.remove('bg-[#f59e0b]', 'text-white'));
-            btn.classList.add('bg-[#f59e0b]', 'text-white');
+            document.querySelectorAll('#lista-lecciones button').forEach(b => b.classList.remove('bg-[#f59e0b]', 'text-white', 'shadow-md'));
+            btn.classList.add('bg-[#f59e0b]', 'text-white', 'shadow-md');
 
-            // Título y Audio
             document.getElementById('leccion-titulo').textContent = lec.title;
-            const player = document.getElementById('player');
             
-            // Reparador de links de Dropbox
-            let url = lec.audio.replace('www.dropbox.com', 'dl.dropboxusercontent.com').replace('?dl=0', '');
-            player.src = url.includes('raw=1') ? url : url + (url.includes('?') ? '&' : '?') + 'raw=1';
+            // Reparador automático de links de Dropbox
+            const player = document.getElementById('player');
+            let rawUrl = lec.audio.replace('www.dropbox.com', 'dl.dropboxusercontent.com').split('?')[0];
+            let key = lec.audio.split('rlkey=')[1]?.split('&')[0];
+            player.src = `${rawUrl}?rlkey=${key}&raw=1`;
 
-            // Texto (Inglés, Fonética, Español)
             const textContainer = document.getElementById('leccion-texto');
             textContainer.innerHTML = '';
-            lec.content.forEach(item => {
-                const block = document.createElement('div');
-                block.className = "border-l-4 border-[#f59e0b] pl-4 py-1";
-                block.innerHTML = `
-                    <p class="text-lg font-bold text-slate-800">${item.en}</p>
-                    <p class="text-slate-400 italic text-sm">${item.ph}</p>
-                    <p class="text-[#10b981]">${item.es}</p>
+            
+            // Renderizar contenido (Inglés, Fonética, Español)
+            lec.content.forEach(line => {
+                const item = document.createElement('div');
+                item.className = "group border-l-4 border-slate-200 hover:border-[#f59e0b] pl-6 transition-all";
+                item.innerHTML = `
+                    <p class="text-xl font-bold text-slate-800 mb-1">${line.en}</p>
+                    <p class="text-slate-400 italic text-sm mb-1">${line.ph}</p>
+                    <p class="text-emerald-600 font-medium">${line.es}</p>
                 `;
-                textContainer.appendChild(block);
+                textContainer.appendChild(item);
             });
 
-            // Sidebar derecho
             document.getElementById('vocabulario').textContent = lec.vocabulary;
             document.getElementById('tip-cultural').textContent = lec.culturalTip;
             document.getElementById('practica').textContent = lec.practice;
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
     </script>
 </body>
