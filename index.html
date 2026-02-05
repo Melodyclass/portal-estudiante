@@ -3,55 +3,141 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portal de Estudiante - Melody Method</title>
+    <title>MelodyMethod - Portal del Estudiante</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
-<body class="bg-slate-50 min-h-screen p-4 md:p-8">
-    <div class="max-w-2xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden">
-        <div class="bg-indigo-600 p-6 text-white text-center">
-            <h1 id="curso-nombre" class="text-2xl font-bold">Cargando curso...</h1>
-            <p id="alumno-nombre" class="opacity-90">Selecciona tu archivo JSON</p>
+<body class="bg-slate-100 min-h-screen flex">
+
+    <aside class="w-80 bg-[#1e293b] text-white flex flex-col shadow-xl">
+        <div class="p-6">
+            <h1 class="text-3xl font-bold text-[#f59e0b]">MelodyMethod</h1>
+            <p id="alumno-nombre" class="text-slate-400 text-sm mt-1 uppercase tracking-widest">ESTUDIANTE: ...</p>
         </div>
 
-        <div class="p-6">
-            <input type="file" id="jsonFile" accept=".json" class="mb-6 block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
-            
-            <div id="lecciones-container" class="space-y-4">
+        <nav class="flex-1 px-4">
+            <label class="block mb-6">
+                <div class="bg-[#f59e0b] hover:bg-[#d97706] text-white font-bold py-3 px-4 rounded-lg cursor-pointer flex items-center justify-center gap-2 transition-all shadow-lg">
+                    <i class="fas fa-file-import"></i> CARGAR CURSO (.json)
                 </div>
+                <input type="file" id="jsonFile" accept=".json" class="hidden">
+            </label>
+
+            <div id="lista-lecciones" class="space-y-2">
+                </div>
+        </nav>
+        
+        <div class="p-4 text-xs text-slate-500 border-t border-slate-700">
+            ©2026 DR Quiro Studio
         </div>
-    </div>
+    </aside>
+
+    <main class="flex-1 p-8 overflow-y-auto">
+        <div id="pantalla-vacia" class="h-full flex flex-col items-center justify-center text-slate-400">
+            <i class="fas fa-headphones text-6xl mb-4"></i>
+            <p class="text-xl">Carga tu archivo JSON para comenzar</p>
+        </div>
+
+        <div id="contenido-leccion" class="hidden grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div class="lg:col-span-2 space-y-6">
+                <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-200">
+                    <h2 id="leccion-titulo" class="text-2xl font-bold text-slate-800 mb-6"></h2>
+                    
+                    <div id="audio-box" class="mb-8 bg-slate-50 p-4 rounded-xl flex items-center gap-4 border border-slate-100">
+                        <audio id="player" controls class="w-full"></audio>
+                    </div>
+
+                    <div id="leccion-texto" class="space-y-6">
+                        </div>
+                </div>
+            </div>
+
+            <div class="space-y-6">
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                    <h3 class="font-bold text-slate-800 flex items-center gap-2 border-b pb-3 mb-4 text-[#1e293b]">
+                        <i class="fas fa-book text-[#3b82f6]"></i> Vocabulario
+                    </h3>
+                    <div id="vocabulario" class="text-slate-600 space-y-2"></div>
+                </div>
+
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                    <h3 class="font-bold text-slate-800 flex items-center gap-2 border-b pb-3 mb-4 text-[#1e293b]">
+                        <i class="fas fa-globe text-[#3b82f6]"></i> Tip Cultural
+                    </h3>
+                    <p id="tip-cultural" class="text-slate-600"></p>
+                </div>
+
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                    <h3 class="font-bold text-slate-800 flex items-center gap-2 border-b pb-3 mb-4 text-[#1e293b]">
+                        <i class="fas fa-pen text-[#3b82f6]"></i> Práctica
+                    </h3>
+                    <p id="practica" class="text-slate-600"></p>
+                </div>
+            </div>
+        </div>
+    </main>
 
     <script>
+        let cursoData = null;
+
         document.getElementById('jsonFile').addEventListener('change', function(e) {
             const reader = new FileReader();
             reader.onload = function(event) {
-                const data = JSON.parse(event.target.result);
-                document.getElementById('curso-nombre').textContent = data.curso;
-                document.getElementById('alumno-nombre').textContent = "Estudiante: " + data.alumno;
-                
-                const container = document.getElementById('lecciones-container');
-                container.innerHTML = '';
-
-                data.lecciones.forEach(leccion => {
-                    const div = document.createElement('div');
-                    div.className = "border rounded-xl p-4 bg-slate-50";
-                    
-                    // Ajustamos el link de Dropbox para que sea directo
-                    let audioUrl = leccion.audio.replace('www.dropbox.com', 'dl.dropboxusercontent.com').replace('?dl=0', '');
-                    if (!audioUrl.includes('raw=1')) {
-                        audioUrl += (audioUrl.includes('?') ? '&' : '?') + 'raw=1';
-                    }
-
-                    div.innerHTML = `
-                        <h3 class="font-bold text-lg text-indigo-900">${leccion.title}</h3>
-                        <p class="text-slate-600 my-2 italic">"${leccion.text}"</p>
-                        <audio controls class="w-full mt-2" src="${audioUrl}"></audio>
-                    `;
-                    container.appendChild(div);
-                });
+                cursoData = JSON.parse(event.target.result);
+                document.getElementById('alumno-nombre').textContent = "ESTUDIANTE: " + cursoData.alumno;
+                renderMenu();
             };
             reader.readAsText(e.target.files[0]);
         });
+
+        function renderMenu() {
+            const lista = document.getElementById('lista-lecciones');
+            lista.innerHTML = '';
+            cursoData.lecciones.forEach((lec, index) => {
+                const btn = document.createElement('button');
+                btn.className = "w-full text-left p-3 rounded-lg flex items-center gap-3 transition-all hover:bg-slate-700 text-slate-300";
+                btn.innerHTML = `<i class="fas fa-music text-sm opacity-50"></i> ${lec.title}`;
+                btn.onclick = () => mostrarLeccion(index, btn);
+                lista.appendChild(btn);
+            });
+        }
+
+        function mostrarLeccion(idx, btn) {
+            const lec = cursoData.lecciones[idx];
+            document.getElementById('pantalla-vacia').classList.add('hidden');
+            document.getElementById('contenido-leccion').classList.remove('hidden');
+            
+            // Marcar botón activo
+            document.querySelectorAll('#lista-lecciones button').forEach(b => b.classList.remove('bg-[#f59e0b]', 'text-white'));
+            btn.classList.add('bg-[#f59e0b]', 'text-white');
+
+            // Título y Audio
+            document.getElementById('leccion-titulo').textContent = lec.title;
+            const player = document.getElementById('player');
+            
+            // Reparador de links de Dropbox
+            let url = lec.audio.replace('www.dropbox.com', 'dl.dropboxusercontent.com').replace('?dl=0', '');
+            player.src = url.includes('raw=1') ? url : url + (url.includes('?') ? '&' : '?') + 'raw=1';
+
+            // Texto (Inglés, Fonética, Español)
+            const textContainer = document.getElementById('leccion-texto');
+            textContainer.innerHTML = '';
+            lec.content.forEach(item => {
+                const block = document.createElement('div');
+                block.className = "border-l-4 border-[#f59e0b] pl-4 py-1";
+                block.innerHTML = `
+                    <p class="text-lg font-bold text-slate-800">${item.en}</p>
+                    <p class="text-slate-400 italic text-sm">${item.ph}</p>
+                    <p class="text-[#10b981]">${item.es}</p>
+                `;
+                textContainer.appendChild(block);
+            });
+
+            // Sidebar derecho
+            document.getElementById('vocabulario').textContent = lec.vocabulary;
+            document.getElementById('tip-cultural').textContent = lec.culturalTip;
+            document.getElementById('practica').textContent = lec.practice;
+        }
     </script>
 </body>
 </html>
